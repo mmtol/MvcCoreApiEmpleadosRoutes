@@ -73,7 +73,7 @@ namespace MvcCoreApiEmpleadosRoutes.Services
 
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/empleados/oficios";
+                string request = "api/empleados/Oficios";
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(header);
@@ -83,6 +83,30 @@ namespace MvcCoreApiEmpleadosRoutes.Services
                     string json = await response.Content.ReadAsStringAsync();
                     oficios = JsonConvert.DeserializeObject<List<string>>(json);
                     return oficios;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public async Task<List<Empleado>> GetEmpleadosOficioAsync(string oficio)
+        {
+            List<Empleado> empleados = new List<Empleado>();
+
+            using (HttpClient client = new HttpClient())
+            {
+                string request = "api/empleados/EmpleadosByOficio/" + oficio;
+                client.BaseAddress = new Uri(url);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(header);
+                HttpResponseMessage response = await client.GetAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    empleados = JsonConvert.DeserializeObject<List<Empleado>>(json);
+                    return empleados;
                 }
                 else
                 {

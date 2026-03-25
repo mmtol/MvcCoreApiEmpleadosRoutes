@@ -11,9 +11,10 @@
         <option>-- Elige un oficio --</option>
         @foreach (string oficio in oficios)
         {
-            <option>oficio</option> 
+            <option>@oficio</option> 
         }
-        </select>
+    </select>
+    <button>Buscar</button>
 </form>
 
 @if (Model != null)
