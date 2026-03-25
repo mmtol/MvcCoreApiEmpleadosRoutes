@@ -1,0 +1,13 @@
+﻿@model Empleado
+
+<h1>Details</h1>
+
+<a asp-controller="Empleados" asp-action="Servidor">Volver</a>
+
+@if (Model != null)
+{
+    <h2>Apellido: @Model.Apellido</h2>
+    <p>Oficio: @Model.Oficio</p>
+    <p>Salario: @Model.Salario</p>
+    <p>Departamento: @Model.Departamento</p>
+}
