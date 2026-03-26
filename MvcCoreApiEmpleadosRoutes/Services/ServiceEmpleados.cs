@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using NugetApiModelsMMT.Models;
+﻿using NugetApiModelsMMT.Models;
 using System.Net.Http.Headers;
 
 namespace MvcCoreApiEmpleadosRoutes.Services
@@ -17,102 +16,59 @@ namespace MvcCoreApiEmpleadosRoutes.Services
             header = new MediaTypeWithQualityHeaderValue("application/json");
         }
 
-        public async Task<List<Empleado>> GetEmpleadosAsync()
+        private async Task<T> CallApiAsync<T>(string request)
         {
-            List<Empleado> empleados = new List<Empleado>();
-
             using (HttpClient client = new HttpClient())
             {
-                string request = "api/empleados";
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(header);
                 HttpResponseMessage response = await client.GetAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
-                    //recuperamos el contenido en json
-                    string json = await response.Content.ReadAsStringAsync();
-                    //mediante newton serializamos
-                    empleados = JsonConvert.DeserializeObject<List<Empleado>>(json);
-                    return empleados;
+                    T data = await response.Content.ReadAsAsync<T>();
+                    return data;
                 }
                 else
                 {
-                    return null;
+                    return default(T);
                 }
             }
+        }
+
+        public async Task<List<Empleado>> GetEmpleadosAsync()
+        {
+            string request = "api/empleados";
+            List<Empleado> empleados = await CallApiAsync<List<Empleado>>(request);
+            return empleados;
         }
 
         public async Task<Empleado> FindEmpleadoAsync(int idEmpleado)
         {
-            Empleado empleado = new Empleado();
-
-            using (HttpClient client = new HttpClient())
-            {
-                string request = "api/empleados/" + idEmpleado;
-                client.BaseAddress = new Uri(url);
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(header);
-                HttpResponseMessage response = await client.GetAsync(request);
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    empleado = JsonConvert.DeserializeObject<Empleado>(json);
-                    return empleado;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            string request = "api/empleados/" + idEmpleado;
+            Empleado empleado = await CallApiAsync<Empleado>(request);
+            return empleado;
         }
 
         public async Task<List<string>> GetOficioAsync()
         {
-            List<string> oficios = new List<string>();
-
-            using (HttpClient client = new HttpClient())
-            {
-                string request = "api/empleados/Oficios";
-                client.BaseAddress = new Uri(url);
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(header);
-                HttpResponseMessage response = await client.GetAsync(request);
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    oficios = JsonConvert.DeserializeObject<List<string>>(json);
-                    return oficios;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            string request = "api/empleados/Oficios";
+            List<string> oficios = await CallApiAsync<List<string>>(request);
+            return oficios;
         }
 
         public async Task<List<Empleado>> GetEmpleadosOficioAsync(string oficio)
         {
-            List<Empleado> empleados = new List<Empleado>();
+            string request = "api/empleados/EmpleadosByOficio/" + oficio;
+            List<Empleado> empleados = await CallApiAsync<List<Empleado>>(request);
+            return empleados;
+        }
 
-            using (HttpClient client = new HttpClient())
-            {
-                string request = "api/empleados/EmpleadosByOficio/" + oficio;
-                client.BaseAddress = new Uri(url);
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(header);
-                HttpResponseMessage response = await client.GetAsync(request);
-                if (response.IsSuccessStatusCode)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    empleados = JsonConvert.DeserializeObject<List<Empleado>>(json);
-                    return empleados;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+        public async Task<List<Empleado>> GetEmpleadosSalarioDepartamentoAsync(int salario, int departamento)
+        {
+            string request = "api/empleados/EmpleadosBySalarioDepartamento/" + salario + "/" + departamento;
+            List<Empleado> empleados = await CallApiAsync<List<Empleado>>(request);
+            return empleados;
         }
     }
 }
